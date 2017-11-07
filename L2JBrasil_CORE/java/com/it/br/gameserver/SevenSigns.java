@@ -614,18 +614,13 @@ public class SevenSigns
      */
     protected void restoreSevenSignsData()
 	{
-    	Connection con = null;
-    	PreparedStatement statement = null;
-    	ResultSet rset = null;
-
-    	try
+    	try(Connection con = L2DatabaseFactory.getInstance().getConnection())
     	{
-	    	con = L2DatabaseFactory.getInstance().getConnection();
-		    statement = con.prepareStatement("SELECT char_obj_id, cabal, seal, red_stones, green_stones, blue_stones, " +
-		    	"ancient_adena_amount, contribution_score FROM seven_signs");
-		    rset = statement.executeQuery();
+			PreparedStatement statement = con.prepareStatement("SELECT char_obj_id, cabal, seal, red_stones, green_stones, blue_stones, " +
+					"ancient_adena_amount, contribution_score FROM seven_signs");
+			ResultSet rset = statement.executeQuery();
 
-		    while (rset.next())
+			while (rset.next())
 		    {
 		    	int charObjId = rset.getInt("char_obj_id");
 
@@ -687,16 +682,6 @@ public class SevenSigns
     	catch (SQLException e)
     	{
     		_log.severe("SevenSigns: Unable to load Seven Signs data from database: " + e);
-    	}
-    	finally
-    	{
-    		try
-    		{
-    		    rset.close();
-    		    statement.close();
-    		    con.close();
-    		}
-    		catch (Exception e) {}
     	}
 
 		// Festival data is loaded now after the Seven Signs engine data.
